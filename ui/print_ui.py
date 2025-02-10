@@ -1,6 +1,5 @@
-import sys
 import os
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QGridLayout, QFrame, QScrollArea, QHBoxLayout, QListWidget
+from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QGridLayout, QScrollArea, QListWidget
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt
 
@@ -8,29 +7,42 @@ class PrintUI(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
-        self.setWindowTitle("Print Results")
+        self.setWindowTitle("عرض النتائج")
         self.setGeometry(100, 100, 1024, 600)
         self.setStyleSheet("background-color: #0F2027; color: white; font-family: Arial;")
+        self.init_ui()
 
+    def init_ui(self):
         layout = QVBoxLayout()
 
-        # Title
-        self.title_label = QLabel("Print Results")
-        self.title_label.setStyleSheet("font-size: 50px; font-weight: bold; color: #00FFFF; text-align: center;")
+        # العنوان
+        self.title_label = QLabel("عرض النتائج")
+        self.title_label.setStyleSheet("""
+            font-size: 50px; 
+            font-weight: bold; 
+            color: #00FFFF; 
+            text-align: center;
+        """)
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.title_label)
 
-        # Horizontal layout for folder selection and image display
+        # تخطيط المحتوى
         content_layout = QHBoxLayout()
         layout.addLayout(content_layout)
 
-        # Folder list
+        # قائمة المجلدات
         self.folder_list = QListWidget()
-        self.folder_list.setStyleSheet("font-size: 20px; padding: 10px; background-color: #1E1E1E; color: #00FFFF; border: 2px solid #00FFFF;")
+        self.folder_list.setStyleSheet("""
+            font-size: 20px; 
+            padding: 10px; 
+            background-color: #1E1E1E; 
+            color: #00FFFF; 
+            border: 2px solid #00FFFF;
+        """)
         self.folder_list.itemClicked.connect(self.load_images)
         content_layout.addWidget(self.folder_list)
 
-        # Image grid
+        # شبكة الصور
         self.image_grid = QGridLayout()
         self.image_container = QWidget()
         self.image_container.setLayout(self.image_grid)
@@ -39,13 +51,22 @@ class PrintUI(QWidget):
         self.scroll_area.setWidget(self.image_container)
         content_layout.addWidget(self.scroll_area)
 
-        # Load folders dynamically based on project directory
+        # تحميل المجلدات
         self.results_directory = os.path.join(os.getcwd(), "results")
         self.load_folders()
 
-        # Back Button
-        self.back_button = QPushButton("Back")
-        self.back_button.setStyleSheet("font-size: 32px; font-weight: bold; padding: 20px; border-radius: 15px; background-color: #FF4500; color: white; border: 2px solid #FF6347; min-width: 200px;")
+        # زر العودة
+        self.back_button = QPushButton("العودة")
+        self.back_button.setStyleSheet("""
+            font-size: 32px; 
+            font-weight: bold; 
+            padding: 20px; 
+            border-radius: 15px; 
+            background-color: #FF4500; 
+            color: white; 
+            border: 2px solid #FF6347; 
+            min-width: 200px;
+        """)
         self.back_button.clicked.connect(self.go_back)
         layout.addWidget(self.back_button, alignment=Qt.AlignmentFlag.AlignCenter)
 
@@ -69,7 +90,11 @@ class PrintUI(QWidget):
         for filename in sorted(os.listdir(directory)):
             if filename.endswith(".png"):
                 image_path = os.path.join(directory, filename)
-                pixmap = QPixmap(image_path).scaled(200, 200, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                pixmap = QPixmap(image_path).scaled(
+                    200, 200,
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation
+                )
                 image_label = QLabel()
                 image_label.setPixmap(pixmap)
                 image_label.mousePressEvent = lambda event, path=image_path: self.display_full_image(path)
@@ -81,10 +106,14 @@ class PrintUI(QWidget):
 
     def display_full_image(self, image_path):
         self.full_image_window = QWidget()
-        self.full_image_window.setWindowTitle("Image View")
+        self.full_image_window.setWindowTitle("عرض الصورة")
         self.full_image_window.setGeometry(300, 150, 600, 400)
         full_image_label = QLabel()
-        pixmap = QPixmap(image_path).scaled(500, 500, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        pixmap = QPixmap(image_path).scaled(
+            500, 500,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
         full_image_label.setPixmap(pixmap)
         layout = QVBoxLayout()
         layout.addWidget(full_image_label, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -94,10 +123,3 @@ class PrintUI(QWidget):
     def go_back(self):
         self.close()
         self.main_window.show()
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    main_win = QWidget()
-    window = PrintUI(main_win)
-    window.show()
-    sys.exit(app.exec())

@@ -7,30 +7,42 @@ class SettingsUI(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Settings")
+        self.setWindowTitle("الإعدادات")
         self.setGeometry(200, 200, 300, 200)
+        self.init_ui()
+        self.load_settings()
 
+    def init_ui(self):
         layout = QVBoxLayout()
+        layout.setSpacing(15)
 
-        self.temp_label = QLabel("Start Temperature (°C):")
+        self.temp_label = QLabel("درجة الحرارة الأولية (°C):")
         self.temp_input = QSpinBox()
         self.temp_input.setRange(10, 50)
         layout.addWidget(self.temp_label)
         layout.addWidget(self.temp_input)
 
-        self.duration_label = QLabel("Process Duration (min):")
+        self.duration_label = QLabel("مدة التشغيل (دقيقة):")
         self.duration_input = QSpinBox()
         self.duration_input.setRange(1, 60)
         layout.addWidget(self.duration_label)
         layout.addWidget(self.duration_input)
 
-        self.apply_button = QPushButton("Apply")
-        self.apply_button.setStyleSheet("font-size: 16px; padding: 10px; background-color: #007ACC; color: white;")
+        self.apply_button = QPushButton("تطبيق")
+        self.apply_button.setStyleSheet("""
+            QPushButton {
+                font-size: 16px; 
+                padding: 10px; 
+                background-color: #007ACC; 
+                color: white;
+                border-radius: 8px;
+            }
+            QPushButton:hover { background-color: #005f9e; }
+        """)
         self.apply_button.clicked.connect(self.apply_settings)
         layout.addWidget(self.apply_button)
 
         self.setLayout(layout)
-        self.load_settings()
 
     def load_settings(self):
         try:

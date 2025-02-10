@@ -9,25 +9,33 @@ class ControlButtons(QWidget):
 
     def __init__(self):
         super().__init__()
+        self.init_ui()
+
+    def init_ui(self):
         layout = QVBoxLayout()
+        layout.setSpacing(15)
 
-        self.start_button = self.create_button("Start", "green", self.start_clicked)
-        layout.addWidget(self.start_button)
+        buttons = [
+            ("بدء التشغيل", "green", self.start_clicked),
+            ("إيقاف", "red", self.stop_clicked),
+            ("الإعدادات", "#007ACC", self.settings_clicked),
+            ("إعادة التعيين", "orange", self.reset_clicked, "black")
+        ]
 
-        self.stop_button = self.create_button("Stop", "red", self.stop_clicked)
-        layout.addWidget(self.stop_button)
-
-        self.settings_button = self.create_button("Settings", "blue", self.settings_clicked)
-        layout.addWidget(self.settings_button)
-
-        self.reset_button = self.create_button("Reset", "orange", self.reset_clicked, text_color="black")
-        layout.addWidget(self.reset_button)
+        for text, color, signal, *args in buttons:
+            btn = QPushButton(text)
+            btn.setFixedHeight(50)
+            text_color = args[0] if args else "white"
+            btn.setStyleSheet(f"""
+                QPushButton {{
+                    font-size: 18px; 
+                    background-color: {color}; 
+                    color: {text_color};
+                    border-radius: 8px;
+                }}
+                QPushButton:hover {{ background-color: {color}; opacity: 0.9; }}
+            """)
+            btn.clicked.connect(signal.emit)
+            layout.addWidget(btn)
 
         self.setLayout(layout)
-
-    def create_button(self, text, bg_color, signal, text_color="white"):
-        button = QPushButton(text)
-        button.setFixedHeight(50)
-        button.setStyleSheet(f"font-size: 18px; background-color: {bg_color}; color: {text_color};")
-        button.clicked.connect(signal.emit)
-        return button
